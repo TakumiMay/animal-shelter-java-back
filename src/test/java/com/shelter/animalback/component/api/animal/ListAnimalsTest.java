@@ -21,13 +21,13 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @ExtendWith(SpringExtension.class)
-@AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class ListAnimalTest {
+@AutoConfigureMockMvc
+public class ListAnimalsTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -36,7 +36,6 @@ public class ListAnimalTest {
     private AnimalRepository animalRepository;
 
     @BeforeEach
-    @SneakyThrows
     public void setUp() {
         var cat = new AnimalDao("Thor", "Birmano", "Male", false);
         animalRepository.save(cat);
@@ -55,7 +54,8 @@ public class ListAnimalTest {
     public void listAnimalsWithRightSchema() {
         var response = mockMvc.perform(get("/animals")).andReturn().getResponse();
 
-        var jsonSchema = new JSONObject(new JSONTokener(ListAnimalTest.class.getResourceAsStream("/animals.json")));
+        var jsonSchema =
+                new JSONObject(new JSONTokener(ListAnimalsTest.class.getResourceAsStream("/animals.json")));
         var jsonArray = new JSONArray(response.getContentAsString());
         var schema = SchemaLoader.load(jsonSchema);
         schema.validate(jsonArray);
